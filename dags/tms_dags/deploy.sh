@@ -1,0 +1,1 @@
+cp my_own_dag.py /home/tms/airflow/dags
