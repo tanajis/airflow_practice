@@ -1,0 +1,83 @@
+#-------
+Sections completed:
+1.etl
+2.branch,nested branch
+3.taskgroup
+4.bash operator,python operator
+
+Section to be completed
+1.example complex
+2.dag decoder
+3.external task markers -child, parents
+4.kubernetis executor
+5.param via test commands
+6.short circuit
+7.skip dag
+8.subdag operator
+9.trigger controller dag
+10.trigger target dag
+11.xcom, xcom args with operator
+12.latest,latest only wit trigger
+#-------
+
+
+1. for start, end, join  create dummpy operators
+
+2.If you want your dags to be dependant on previoys runs,
+add argument depends_on_past as true
+Ex.
+args = {
+    'owner': 'airflow',
+    'depends_on_past': True,
+}
+
+3. a >> b , a>>c can also be defined as a >> [b,c]
+4.use days_ago
+5.Explore more in airflow.util
+6.Branch operator callable function should return tas id in STRING format
+7. You can extract and use execution date from airflow as below:
+    Ex.kwargs['execution_date'].minute % 2 == 0
+
+8.Airflow must be Active if we want it to run both manual and scheduled way
+9.Copy dags to home/airflow/dags folder and refresh the airflow, after 30 sec, it will reflect newly added code or change in existing code.
+10.Airflow dags errors are seen on UI,Check if any another way exist?
+11.params and configs, check difference
+12.For bash operator check the ways to pass the script file.
+13.Scheduler runs for all occurance
+between Start Date and current date run if backfill is set true.Check property
+14.What is dag.doc_md? Explore more about it.
+15. **kwargs can allow you to pass various number of params to a functon
+16. XCOM can be used below way
+    - In below function, ti means this instance.
+    - XCOM needs taskid ,key, json as value for pull
+    - input and output  are jsons but in STRING format, we need to make the as json using
+       json.loads
+    def extract(**kwargs):
+        ti = kwargs['ti']
+        data_string = '{"1001": 301.27, "1002": 433.21, "1003": 502.22}'
+        # Push to xcom
+        ti.xcom_push('order_data',data_string)
+
+    # Pull XCOM data
+    extracted_data_string = ti.xcom_pull(task_ids='extract',key='order_data')
+    order_data = json.loads(extracted_data_string)
+
+17.Nesting of branches:
+    branch_1 >> true_1 >> join_1
+    branch_1 >> false_1 >> branch_2 >> [true_2, false_2] >> join_2 >> false_3 >> join_1
+
+             true_1-----------------------------
+            /                                   \
+    branch_1                                     join1
+            \                   true2           /
+             \                 /     \         /
+              false_1 -- branch2      join2---/
+                               \      /
+                                false2
+
+  18.TaskGroup comes from utils.task_group module
+  19.We can define dependencies of task within task group. Taskgroup
+     takes parameter tooltip which is string that we can see when hover on
+     task group in Airflow UI.
+
+  20.
