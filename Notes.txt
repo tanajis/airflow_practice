@@ -87,6 +87,8 @@ between Start Date and current date run if backfill is set true.Check property
       python_callable=lambda: True,
   22. short cicrcuit operator
         - Need to import chain and ShortCircuitOperator
+        - Based on specific condition skip all downstreams
         - chain:
+            chain[t1,t2,t3] is equivalnt to t1>>t2>>t3
         - ShortCircuitOperator:
 
