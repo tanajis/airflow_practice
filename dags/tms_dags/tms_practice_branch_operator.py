@@ -77,7 +77,6 @@ branch = BranchPythonOperator(
     python_callable=select_from_branch
 )
 
-# Define dependencies
 
 join = DummyOperator(
     task_id='join',
@@ -85,10 +84,16 @@ join = DummyOperator(
     dag=dag,
 )
 
+# Define dependencies
+
 start >> branch
 
-branch >> week_start_task >> join
 branch >> week_days_task >> join
 branch >> week_end_task >> join
-
 join >> end
+
+"""
+Note :
+Above dependencies can also be defined in single line as  below
+start >> branch >> [week_start_task,week_days_task,week_end_task] >> join >>end
+"""
