@@ -80,4 +80,11 @@ between Start Date and current date run if backfill is set true.Check property
      takes parameter tooltip which is string that we can see when hover on
      task group in Airflow UI.
 
-  20.
+  20.Need to check more about decorators and dag decorator
+  21. python_callable=lambda: False,
+      python_callable=lambda: True,
+  22. short cicrcuit operator
+        - Need to import chain and ShortCircuitOperator
+        - chain:
+        - ShortCircuitOperator:
+
