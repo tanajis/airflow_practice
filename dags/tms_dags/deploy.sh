@@ -4,3 +4,5 @@ cp tms_practice_branch_operator.py /home/tms/airflow/dags
 cp tms_practice_task_group.py /home/tms/airflow/dags
 cp tms_practice_dag_decorator.py /home/tms/airflow/dags
 cp tms_practice_short_circuit_operator.py /home/tms/airflow/dags
+cp tms_practice_subdag_operator.py /home/tms/airflow/dags
+cp tms_practice_external_task_marker.py /home/tms/airflow/dags
