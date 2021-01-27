@@ -7,16 +7,17 @@ Sections completed:
 2.branch,nested branch
 3.taskgroup
 4.bash operator,python operator
-
-Section to be completed
-1.example complex
-2.dag decoder
-3.external task markers -child, parents
-4.kubernetis executor
-5.param via test commands
+5.dag decoder
 6.short circuit
-7.skip dag
-8.subdag operator
+7.subdag operator
+8.External task markers -child, parents
+9.Param via test commands
+10.skip dag
+
+
+Section to be completed :
+1.example complex
+4.kubernetis executor
 9.trigger controller dag
 10.trigger target dag
 11.xcom, xcom args with operator
@@ -86,10 +87,75 @@ between Start Date and current date run if backfill is set true.Check property
   20.Need to check more about decorators and dag decorator
   21. python_callable=lambda: False,
       python_callable=lambda: True,
-  22. short cicrcuit operator
+  22. short circuit operator
         - Need to import chain and ShortCircuitOperator
         - Based on specific condition skip all downstreams
         - chain:
             chain[t1,t2,t3] is equivalnt to t1>>t2>>t3
         - ShortCircuitOperator:
+  23. Subdag Operator
+        - On UI both dag and subdags are shown,on latest version. why not in old one(client)?
+        - We need to pass dag and subdag to subdag operator
 
+  24.ExternalTaskMarker and ExternalTaskSensor:
+
+      In this example, child_task1 in example_external_task_marker_child depends on parent_task in
+        example_external_task_marker_parent. When parent_task is cleared with "Recursive" selected,
+        the presence of ExternalTaskMarker tells Airflow to clear child_task1 and its
+        downstream tasks.
+        ExternalTaskSensor will keep poking for the status of remote ExternalTaskMarker task at a regular
+        interval till one of the following will happen:
+        1. ExternalTaskMarker reaches the states mentioned in the allowed_states list
+            In this case, ExternalTaskSensor will exit with a succes status code
+        2. ExternalTaskMarker reaches the states mentioned in the failed_states list
+            In this case, ExternalTaskSensor will raise an AirflowException and user need to handle this
+            with multiple downstream tasks
+        3. ExternalTaskSensor times out
+            In this case, ExternalTaskSensor will raise AirflowSkipException or AirflowSensorTimeout
+            exception
+  25. Parameter via test:
+        You can pass variable with param in json format as below:
+        params={"miff": "agg"},
+
+        - In shell script of bash operator, you can access it as below:
+        {{ params.miff }}
+
+        - In python function of python operator you can access it as below:
+        params['miff']
+
+        - These are set as environmnt variables. You access it as below
+            os.environ.get('foo')
+            os.environ.get('AIRFLOW_TEST_MODE')
+
+  26. Skip DAG
+        - we can extend DummyOperator and define execute
+        - If we want to raise exception in DUMMY,we can raise AirflowSkipException
+        - from airflow.exceptions import AirflowSkipException
+
+------------------------------------------------------
+ERRORS & SOLUTIONS:
+------------------------------------------------------
+ 1. Error: The subdag's dag_id should have the form '{parent_dag}.{this_task_id}'
+
+    Sol:
+       change task_id of subdag operator as below:
+            dagid of child = parent_dag_id.subdagOperator_taskid
+            Ex.
+            dag_id = 'ABC'  # Parent GAD ID
+            task_id='PQR'   # Task ID of subdag Operator
+            dag_id="{}.{}".format(parent_dag_id,subdag_task_id) # Dag id of subdag
+                  = "ABC.PQR"
+
+    Note : Both child and parent dags will be shown on UI
+
+
+2: Error:
+     self._validate_dag(kwargs)
+  File "/home/tms/.local/lib/python3.8/site-packages/airflow/operators/subdag.py", line 90, in _validate_dag
+    raise AirflowException(
+airflow.exceptions.AirflowException: The subdag's dag_id should have the form '{parent_dag_id}.{this_task_id}'. Expected 'tms_practice_subdag_operator.subdag'; received 'tms_practice_subdag_operator.inner_dag'.
+
+Sol: subdag operator's task id must be there in subdags dag_id as show in above error
+
+
+3. Error :airflow.exceptions.AirflowException: Tried to set relationships between tasks in more than one DAG: dict_values([<DAG: tms_practice_subdag_operator.subdag>, <DAG: tms_practice_subdag_operator>])

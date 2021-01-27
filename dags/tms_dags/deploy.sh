@@ -6,3 +6,5 @@ cp tms_practice_dag_decorator.py /home/tms/airflow/dags
 cp tms_practice_short_circuit_operator.py /home/tms/airflow/dags
 cp tms_practice_subdag_operator.py /home/tms/airflow/dags
 cp tms_practice_external_task_marker.py /home/tms/airflow/dags
+cp tms_practice_param_via_test.py /home/tms/airflow/dags
+cp tms_practice_skip_dag.py /home/tms/airflow/dags

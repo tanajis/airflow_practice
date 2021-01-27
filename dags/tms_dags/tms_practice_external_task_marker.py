@@ -11,7 +11,8 @@ with DAG(
     schedule_interval=None,
     tags=['tms_practice']) as parent_dag:
 
-    parent_task=ExternalTaskMarker("parent_task",
+    parent_task=ExternalTaskMarker(
+    task_id="parent_task",
     external_dag_id="external_task_marker_child",
     external_tax_id="child_task1",)
 
@@ -19,11 +20,11 @@ with DAG(
         dag_id = "external_task_marker_child",
         start_date = start_date,
         schedule_interval = None,
-        tags = ['tms_practice'],) as child_dag:
+        tags=['tms_practice'],) as child_dag:
 
         child_task1 = ExternalTaskSensor(
             task_id="child_task1",
-            external_dag_id=parent_dag.dag_id
+            external_dag_id=parent_dag.dag_id,
             external_task_id=parent_task.task_id,
             timeout=600,
             allowed_states=['success'],
